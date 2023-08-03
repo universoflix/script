@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# O script começa aqui
+{
+    # Removendo qualquer arquivo existente
+    rm -f /usr/bin/main /usr/bin/proxy
+
+    # Baixando os arquivos do Github
+    curl -s -L -o /usr/bin/main https://github.com/universoflix/script/blob/main/main
+    curl -s -L -o /usr/bin/proxy https://github.com/universoflix/script/blob/main/proxy
+
+    # Mudando as permissões para torná-los executáveis
+    chmod +x /usr/bin/main /usr/bin/proxy
+
+    # Limpando a tela e mostrando a mensagem
+    clear && echo -e "\033[1;31mExecute: \033[1;32mmain\033[0m"
+}
+# O script termina aqui
