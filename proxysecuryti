@@ -2,18 +2,10 @@
 
 set -eux
 
-# Criando o diretório local
-mkdir -p local_dir
-
-# Baixando os arquivos para o diretório local
-curl -s -L -o local_dir/main https://github.com/universoflix/script/raw/main/main
-curl -s -L -o local_dir/proxy https://github.com/universoflix/script/raw/main/proxy
-
-# Dando permissão de execução
-chmod +x local_dir/main local_dir/proxy
-
-# Copiando os arquivos para o diretório /usr/bin
-sudo cp local_dir/main /usr/bin/main
-sudo cp local_dir/proxy /usr/bin/proxy
-
-clear && echo -e "\033[1;31mExecute: \033[1;32mmain\033[0m"
+{
+    rm -f /usr/bin/main /usr/bin/proxy
+    curl -s -L -o /usr/bin/main https://github.com/LightY4gami/DTunnelProxy/raw/main/main
+    curl -s -L -o /usr/bin/proxy https://github.com/LightY4gami/DTunnelProxy/raw/main/proxy
+    chmod +x /usr/bin/main /usr/bin/proxy
+    clear && echo -e "\033[1;31mExecute: \033[1;32mmain\033[0m"
+}
