@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Definindo a nova porta
+NEW_PORT=2222
+
+# Fazendo backup do arquivo original
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+
+# Atualizando a porta
+sudo sed -i "s/^#Port 22$/Port $NEW_PORT/" /etc/ssh/sshd_config
+
+# Reiniciando o serviço SSH
+sudo systemctl restart ssh
