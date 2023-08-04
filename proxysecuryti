@@ -14,7 +14,10 @@ chmod +x local_dir/main local_dir/proxy
 sudo cp local_dir/main /usr/bin/main
 sudo cp local_dir/proxy /usr/bin/proxy
 
-# Executando badvpn-udpgw em uma nova sessão de screen
-screen -dmS udpvpn /bin/badvpn-udpgw --listen-addr 127.0.0.1:7100 --max-clients 10000 --max-connections-for-client 5 --client-socket-sndbuf 10000
+# Executando badvpn-udpgw em novas sessões de screen
+screen -dmS udpvpn7100 /bin/badvpn-udpgw --listen-addr 127.0.0.1:7100 --max-clients 10000 --max-connections-for-client 5 --client-socket-sndbuf 10000
+screen -dmS udpvpn7200 /bin/badvpn-udpgw --listen-addr 127.0.0.1:7200 --max-clients 10000 --max-connections-for-client 5 --client-socket-sndbuf 10000
+screen -dmS udpvpn7300 /bin/badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 10000 --max-connections-for-client 5 --client-socket-sndbuf 10000
+screen -dmS udpvpn7400 /bin/badvpn-udpgw --listen-addr 127.0.0.1:7400 --max-clients 10000 --max-connections-for-client 5 --client-socket-sndbuf 10000
 
-clear && echo -e "\033[1;31mInstalado com Sucesso! A porta UDP 7100 foi aberta com sucesso. Execute: \033[1;32mmain\033[0m para entrar no painel."
+clear && echo -e "Instalado com Sucesso! As portas UDP 7100, 7200, 7300 e 7400 foram abertas com sucesso. Execute: "main" para entrar no painel."
