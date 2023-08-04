@@ -3,22 +3,43 @@
 # Limpar todas as regras existentes
 iptables -F
 
-# Permitir tráfego TCP nas portas 22, 80, 8080 e 443
+# Permitir tráfego TCP nas portas 22, 80, 8080 e 443 de entrada e saída
 iptables -A INPUT -p tcp --dport 22 -j ACCEPT
 iptables -A INPUT -p tcp --dport 80 -j ACCEPT
 iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
 iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8080 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 
-# Permitir tráfego UDP nas portas 22, 80, 8080 e 443
+# Permitir tráfego UDP nas portas 22, 80, 8080 e 443 de entrada e saída
 iptables -A INPUT -p udp --dport 22 -j ACCEPT
 iptables -A INPUT -p udp --dport 80 -j ACCEPT
 iptables -A INPUT -p udp --dport 8080 -j ACCEPT
 iptables -A INPUT -p udp --dport 443 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 22 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 80 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 8080 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 443 -j ACCEPT
+
+# Permitir tráfego UDP nas portas 7100, 7200, 7300 e 7400 de entrada e saída
+iptables -A INPUT -p udp --dport 7100 -j ACCEPT
+iptables -A INPUT -p udp --dport 7200 -j ACCEPT
+iptables -A INPUT -p udp --dport 7300 -j ACCEPT
+iptables -A INPUT -p udp --dport 7400 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 7100 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 7200 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 7300 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 7400 -j ACCEPT
 
 # Bloquear todo o tráfego de entrada não especificado acima
 iptables -P INPUT DROP
 
+# Bloquear todo o tráfego de saída não especificado acima
+iptables -P OUTPUT DROP
+
 # Salvar as regras para que sejam aplicadas após reinicialização do sistema
 iptables-save > /etc/iptables/rules.v4
 
-echo "Regras adicionadas com sucesso para permitir o tráfego nas portas 22, 80, 8080 e 443."
+echo "Regras adicionadas com sucesso para permitir o tráfego nas portas 22, 80, 8080, 443, 7100, 7200, 7300 e 7400 de entrada e saída."
