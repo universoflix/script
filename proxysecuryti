@@ -16,4 +16,7 @@ chmod +x local_dir/main local_dir/proxy
 sudo cp local_dir/main /usr/bin/main
 sudo cp local_dir/proxy /usr/bin/proxy
 
-clear && echo -e "\033[1;31mExecute: \033[1;32mmain\033[0m"
+# Executando badvpn-udpgw em uma nova sessão de screen
+screen -dmS udpvpn /bin/badvpn-udpgw --listen-addr 127.0.0.1:7100 --max-clients 10000 --max-connections-for-client 5 --client-socket-sndbuf 10000
+
+clear && echo -e "\033[1;31mInstalado com Sucesso! execulte: \033[1;32mmain\033[0m"
