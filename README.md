@@ -13,3 +13,9 @@ Comando para instalar o Proxy
 curl -s -L -o proxysecuryti.sh https://raw.githubusercontent.com/universoflix/script/main/proxysecuryti && chmod +x proxysecuryti.sh && ./proxysecuryti.sh
 
 Senha: @LightXVD
+
+______________________________________
+
+Comando para abrir as porta.
+
+wget -O configurar_firewall.sh https://raw.githubusercontent.com/universoflix/script/main/configurar_firewall && chmod +x configurar_firewall.sh && sudo ./configurar_firewall.sh
