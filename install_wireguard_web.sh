@@ -21,8 +21,11 @@ sudo mkdir /opt/wireguard_web/templates
 cp app.py /opt/wireguard_web/
 cp templates/index.html /opt/wireguard_web/templates/
 
+# Obter o endereço IP local do servidor
+server_ip=$(hostname -I | awk '{print $1}')
+
 # Iniciar o servidor Flask em background
 python3 /opt/wireguard_web/app.py &
 
 echo "Instalação completa. O servidor web do WireGuard foi iniciado."
-echo "Você pode acessar a interface web em http://127.0.0.1:5000"
+echo "Você pode acessar a interface web em http://$server_ip:5000"
