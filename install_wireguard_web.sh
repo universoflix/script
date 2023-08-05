@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Obter o diretório atual do script
+script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 # Atualizar o sistema
 sudo apt-get update
 
@@ -18,8 +21,8 @@ sudo chown $USER:$USER /opt/wireguard_web
 sudo mkdir /opt/wireguard_web/templates
 
 # Copiar os arquivos do servidor Flask e do HTML para o diretório correto
-cp app.py /opt/wireguard_web/app.py
-cp templates/index.html /opt/wireguard_web/templates/
+cp $script_dir/app.py /opt/wireguard_web/app.py
+cp $script_dir/templates/index.html /opt/wireguard_web/templates/
 
 # Obter o endereço IP local do servidor
 server_ip=$(hostname -I | awk '{print $1}')
