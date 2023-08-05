@@ -17,8 +17,8 @@ sudo chown $USER:$USER /opt/wireguard_web
 # Criar um diretório para o servidor web do Flask
 sudo mkdir /opt/wireguard_web/templates
 
-# Copiar os arquivos do servidor Flask e do HTML
-cp app.py /opt/wireguard_web/
+# Copiar os arquivos do servidor Flask e do HTML para o diretório correto
+cp app.py /opt/wireguard_web/app.py
 cp templates/index.html /opt/wireguard_web/templates/
 
 # Obter o endereço IP local do servidor
