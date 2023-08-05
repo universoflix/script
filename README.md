@@ -1,8 +1,4 @@
-# script
-
-
-
-comando para auterar a porta 22 para 2222
+Comando para auterar a porta 22 para 2222
 
 wget -O porta2222.sh https://raw.githubusercontent.com/universoflix/script/main/porta2222 && chmod +x porta2222.sh && sudo ./porta2222.sh
 
@@ -19,3 +15,10 @@ ______________________________________
 Comando para abrir as porta.
 
 wget -O configurar_firewall.sh https://raw.githubusercontent.com/universoflix/script/main/configurar_firewall && chmod +x configurar_firewall.sh && sudo ./configurar_firewall.sh
+
+______________________________________
+
+Instalar o Wireguard com interface
+
+wget https://raw.githubusercontent.com/universoflix/script/main/install_wireguard_web.sh && chmod +x install_wireguard_web.sh && ./install_wireguard_web.sh
+
