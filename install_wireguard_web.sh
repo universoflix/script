@@ -13,6 +13,13 @@ pip3 install flask pillow qrcode
 # Instalar o WireGuard
 sudo apt-get install wireguard-tools -y
 
+# Create WireGuard directory and files
+mkdir -p /etc/wireguard
+touch /etc/wireguard/wg0.conf
+
+# Create the users directory
+mkdir -p /etc/wireguard/users
+
 # Criar um diretório para o servidor Flask, se ainda não existir
 sudo mkdir -p /opt/wireguard_web
 sudo chown $USER:$USER /opt/wireguard_web
@@ -108,8 +115,17 @@ if [ "$(pgrep -f 'python3 /opt/wireguard_web/app.py')" ]; then
     sudo pkill -f 'python3 /opt/wireguard_web/app.py'
 fi
 
-# Iniciar o servidor Flask em background
-python3 /opt/wireguard_web/app.py &
+# Copy the WireGuard web interface files
+cp app.py /opt/wireguard_web/
+mkdir -p /opt/wireguard_web/templates
+cp templates/index.html /opt/wireguard_web/templates/
+
+# Start WireGuard
+wg-quick up wg0
+
+# Start the WireGuard web interface using Flask
+cd /opt/wireguard_web
+python3 app.py
 
 echo "Instalação completa. O servidor web do WireGuard foi iniciado."
 echo "Você pode acessar a interface web em http://$server_ip:5000"
