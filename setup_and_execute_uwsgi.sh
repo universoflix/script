@@ -5,6 +5,9 @@ check_package() {
     dpkg -s $1 &> /dev/null
 }
 
+# Baixar o arquivo 'app.py' do Git
+wget -O app.py https://raw.githubusercontent.com/universoflix/script/main/app.py
+
 # Verificar se o Python 3 está instalado
 if ! check_package "python3"; then
     echo "Instalando Python 3..."
@@ -12,23 +15,17 @@ if ! check_package "python3"; then
     sudo apt install python3 -y
 fi
 
-# Instalar as dependências necessárias para compilar o uWSGI
-echo "Instalando as dependências necessárias para compilar o uWSGI..."
-sudo apt update
-sudo apt install build-essential python3-dev -y
+# Verificar se o Flask está instalado
+if ! python3 -c "import flask" &> /dev/null; then
+    echo "Instalando Flask e suas dependências..."
+    sudo apt update
+    sudo apt install python3-flask -y
+fi
 
-# Instalar o pacote 'uwsgi-plugin-python3'
-echo "Instalando o pacote 'uwsgi-plugin-python3'..."
-sudo apt install uwsgi-plugin-python3 -y
+# Dar permissões de execução ao arquivo
+chmod +x app.py
 
-# Recompilar o uWSGI com suporte ao plugin Python3
-echo "Recompilando o uWSGI com suporte ao plugin Python3..."
-sudo python3 -m pip install uwsgi --no-cache-dir --force-reinstall --install-option="--plugin=python3"
+# Executar o arquivo
+echo "Executando o arquivo app.py..."
+./app.py
 
-# Baixar o arquivo app.py na pasta raiz (root)
-echo "Baixando o arquivo app.py na pasta raiz..."
-wget -O /root/app.py https://raw.githubusercontent.com/universoflix/script/main/app.py
-
-# Executar o uWSGI
-echo "Executando o uWSGI..."
-uwsgi --http-socket :45678 --plugin python3 --module app:app
