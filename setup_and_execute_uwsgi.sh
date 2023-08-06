@@ -19,6 +19,7 @@ wget -O app.py https://raw.githubusercontent.com/universoflix/script/main/app.py
 if ! check_package "uwsgi"; then
     echo "Instalando uWSGI..."
     sudo apt update
+    sudo apt install uwsgi-plugin-python3 -y
     sudo apt install uwsgi -y
 fi
 
@@ -30,4 +31,4 @@ fi
 
 # Executar o uWSGI
 echo "Executando o uWSGI..."
-uwsgi --http-socket :45678 --module app:app
+uwsgi --http-socket :45678 --plugin python3 --wsgi-file app.py
