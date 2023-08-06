@@ -35,49 +35,52 @@ import os
 
 app = Flask(__name__)
 
-# Configurações do WireGuard
-wg_interface = 'wg0'
-wg_config_file = '/etc/wireguard/wg0.conf'
-wg_users_dir = '/etc/wireguard/users'
+# Diretório onde serão salvos os arquivos de configuração do WireGuard
+wg_config_dir = '/etc/wireguard'
 
+# Diretório onde serão salvos os arquivos de usuário do WireGuard
+wg_users_dir = os.path.join(wg_config_dir, 'users')
 
-# Função para criar um novo usuário no WireGuard
-def create_user(username):
-    os.system(f'wg genkey > {wg_users_dir}/{username}.private')
-    os.system(f'wg pubkey < {wg_users_dir}/{username}.private > {wg_users_dir}/{username}.public')
-    user_private_key = open(f'{wg_users_dir}/{username}.private').read().strip()
-    user_public_key = open(f'{wg_users_dir}/{username}.public').read().strip()
-    user_config = f'[Peer]\nPublicKey = {user_public_key}\nAllowedIPs = 10.0.0.2/32'
-    with open(wg_config_file, 'a') as f:
-        f.write(user_config)
-    os.system(f'sudo wg set {wg_interface} peer {user_public_key} allowed-ips 10.0.0.2/32')
-    return user_private_key
+# Diretório onde serão salvos os arquivos QR
+static_dir = 'static'
+if not os.path.exists(static_dir):
+    os.makedirs(static_dir)
 
-# Rota principal
 @app.route('/')
 def index():
     users = []
-    for file in os.listdir(wg_users_dir):
-        if file.endswith('.public'):
-            users.append(file[:-7])
+    if os.path.exists(wg_users_dir):
+        users = [f.replace('.conf', '') for f in os.listdir(wg_users_dir) if f.endswith('.conf')]
     return render_template('index.html', users=users)
 
-# Rota para criar um novo usuário
 @app.route('/create', methods=['POST'])
 def create():
     username = request.form['username']
-    private_key = create_user(username)
-    qr = qrcode.make(private_key)
-    qr.save(f'/opt/wireguard_web/{username}.png')
-    return redirect(url_for('index'))
+    private_key = request.form['private_key']
+    address = request.form['address']
+    allowed_ips = request.form['allowed_ips']
 
-# Rota para apagar um usuário
-@app.route('/delete/<username>')
-def delete(username):
-    os.system(f'sudo wg set {wg_interface} peer {username}.public remove')
-    os.system(f'sudo wg-quick down {wg_interface}')
-    os.system(f'sudo wg-quick up {wg_interface}')
-    os.system(f'sudo rm {wg_users_dir}/{username}.private {wg_users_dir}/{username}.public')
+    # Código para criar o arquivo de configuração do usuário do WireGuard
+    config_file_path = os.path.join(wg_users_dir, f'{username}.conf')
+    with open(config_file_path, 'w') as f:
+        f.write(f'[Interface]\nPrivateKey = {private_key}\nAddress = {address}\n')
+        f.write(f'\n[Peer]\nAllowedIPs = {allowed_ips}')
+
+    # Criação do código QR
+    qr_data = f'[{username}]\nPrivateKey = {private_key}\nAddress = {address}\nAllowedIPs = {allowed_ips}\n'
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(qr_data)
+    qr.make(fit=True)
+
+    # Salvando a imagem QR no diretório static
+    qr_image_path = os.path.join(static_dir, f'{username}.png')
+    qr.make_image().save(qr_image_path)
+
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
