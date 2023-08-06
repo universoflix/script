@@ -1,9 +1,9 @@
-
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import subprocess
-import threading
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/', methods=['POST', 'GET'])
 def create_account():
@@ -27,12 +27,5 @@ def create_account():
     elif request.method == 'GET':
         return "Este é um servidor Flask para criar contas. Envie uma solicitação POST com os campos 'login', 'senha', 'limite' e 'validade' para criar uma conta."
 
-def run_http():
-    app.run(host='0.0.0.0', port=45678)
-
-def run_https():
-    app.run(host='0.0.0.0', port=45679, ssl_context=('cert.pem', 'key.pem'))  # Using self-signed certificate
-
 if __name__ == '__main__':
-    threading.Thread(target=run_http).start()     # Start HTTP server
-    threading.Thread(target=run_https).start()    # Start HTTPS server
+    app.run(host='0.0.0.0', port=45678)
