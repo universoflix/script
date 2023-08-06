@@ -56,7 +56,7 @@ def delete_user(username):
     return index()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
 EOF
 
 # Criar o arquivo index.html com o conteúdo da página HTML
@@ -85,8 +85,11 @@ EOF
 # Obter o endereço IP local do servidor
 server_ip=$(hostname -I | awk '{print $1}')
 
+# Finalizar o servidor Flask, se já estiver em execução
+pkill -f app.py
+
 # Iniciar o servidor Flask em background
-python3 /opt/wireguard_web/app.py &
+nohup python3 /opt/wireguard_web/app.py > /dev/null 2>&1 &
 
 echo "Instalação completa. O servidor web do WireGuard foi iniciado."
 echo "Você pode acessar a interface web em http://$server_ip:5000"
