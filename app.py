@@ -4,14 +4,12 @@ import os
 
 app = Flask(__name__)
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['GET'])
 def create_account():
-    data = request.json  # Parse JSON data from the request
-
-    login = data.get('login')
-    senha = data.get('senha')
-    limite = data.get('limite')
-    validade = data.get('validade')
+    login = request.args.get('login')
+    senha = request.args.get('senha')
+    limite = request.args.get('limite')
+    validade = request.args.get('validade')
 
     if not all([login, senha, limite, validade]):
         return jsonify({"message": "Dados incompletos!"}), 400
