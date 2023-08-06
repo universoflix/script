@@ -29,9 +29,9 @@ sudo mkdir -p /opt/wireguard_web/templates
 
 # Criar o arquivo app.py com o conteúdo do servidor Flask
 cat << 'EOF' > /opt/wireguard_web/app.py
-from flask import Flask, request, render_template, redirect, url_for
-import qrcode
 import os
+from flask import Flask, render_template, request, redirect, url_for
+import qrcode
 
 app = Flask(__name__)
 
