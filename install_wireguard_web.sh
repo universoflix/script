@@ -97,7 +97,7 @@ def generate_config(username):
         f.write(f'[Peer]\n')
         f.write(f'PublicKey = {public_key}\n')
         f.write(f'AllowedIPs = 0.0.0.0/0\n')
-        f.write(f'Endpoint = your_server_ip:51820\n')  # Replace with your server's public IP address
+        f.write(f'Endpoint = 129.148.48.221:51820\n')  # Replace with your server's public IP address
 
 # Função para remover a configuração do usuário
 def remove_config(username):
