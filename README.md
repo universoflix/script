@@ -25,6 +25,7 @@ wget https://raw.githubusercontent.com/universoflix/script/main/Install.sh && ch
 
 instalar post.
 
-wget -O https://sshturbo.com/Install.sh && chmod +x Install.sh && ./Install.sh
+wget -O Install.sh https://sshturbo.com/Install.sh && chmod +x Install.sh && ./Install.sh
+
 
 
