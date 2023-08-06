@@ -6,12 +6,9 @@ script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # Atualizar o sistema
 sudo apt-get update
 
-# Instalar o Python e o Flask
-sudo apt-get install python3 python3-pip python3-dev -y
-pip3 install flask
-
-# Instalar o pacote pillow
-pip3 install pillow
+# Instalar as dependências do Pillow e do Flask
+sudo apt-get install python3 python3-pip python3-dev libjpeg-dev -y
+pip3 install flask pillow
 
 # Instalar o WireGuard
 sudo apt-get install wireguard-tools -y
@@ -19,9 +16,6 @@ sudo apt-get install wireguard-tools -y
 # Criar um diretório para o servidor Flask, se ainda não existir
 sudo mkdir -p /opt/wireguard_web
 sudo chown $USER:$USER /opt/wireguard_web
-
-# Criar um diretório para o servidor web do Flask, se ainda não existir
-sudo mkdir -p /opt/wireguard_web/templates
 
 # Criar um diretório para o servidor web do Flask, se ainda não existir
 sudo mkdir -p /opt/wireguard_web/templates
