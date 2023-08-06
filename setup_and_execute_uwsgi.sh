@@ -30,4 +30,4 @@ fi
 
 # Executar o uWSGI
 echo "Executando o uWSGI..."
-uwsgi --http-socket :45678 --wsgi-file app.py
+uwsgi --http-socket :45678 --module app:app
