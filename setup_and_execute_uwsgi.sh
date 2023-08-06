@@ -5,9 +5,6 @@ check_package() {
     dpkg -s $1 &> /dev/null
 }
 
-# Baixar o arquivo Python do Git
-wget -O POST.py https://raw.githubusercontent.com/universoflix/script/main/POST.py
-
 # Verificar se o Python 3 está instalado
 if ! check_package "python3"; then
     echo "Instalando Python 3..."
@@ -15,17 +12,22 @@ if ! check_package "python3"; then
     sudo apt install python3 -y
 fi
 
-# Verificar se o Flask está instalado
+# Baixar o arquivo app.py
+wget -O app.py https://raw.githubusercontent.com/universoflix/script/main/app.py
+
+# Instalar o uWSGI e Flask
+if ! check_package "uwsgi"; then
+    echo "Instalando uWSGI..."
+    sudo apt update
+    sudo apt install uwsgi -y
+fi
+
 if ! python3 -c "import flask" &> /dev/null; then
     echo "Instalando Flask e suas dependências..."
     sudo apt update
     sudo apt install python3-flask -y
 fi
 
-# Dar permissões de execução ao arquivo
-chmod +x POST.py
-
-# Executar o arquivo
-echo "Executando o arquivo POST.py..."
-./POST.py
-
+# Executar o uWSGI
+echo "Executando o uWSGI..."
+uwsgi --http :45678 --wsgi-file app.py
