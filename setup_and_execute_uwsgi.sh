@@ -17,6 +17,10 @@ echo "Instalando as dependências necessárias para compilar o uWSGI..."
 sudo apt update
 sudo apt install build-essential python3-dev -y
 
+# Instalar o pacote 'uwsgi-plugin-python3'
+echo "Instalando o pacote 'uwsgi-plugin-python3'..."
+sudo apt install uwsgi-plugin-python3 -y
+
 # Recompilar o uWSGI com suporte ao plugin Python3
 echo "Recompilando o uWSGI com suporte ao plugin Python3..."
 sudo python3 -m pip install uwsgi --no-cache-dir --force-reinstall --install-option="--plugin=python3"
