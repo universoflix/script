@@ -25,6 +25,7 @@ cat << 'EOF' > /opt/wireguard_web/app.py
 from flask import Flask, request, render_template, send_file
 import subprocess
 import qrcode
+import os
 
 app = Flask(__name__)
 
@@ -36,9 +37,9 @@ def index():
 
 # Função para obter a lista de usuários do WireGuard
 def get_users():
+    users = []
     try:
         users_output = subprocess.check_output(['wg', 'show', 'wg0', 'allowed-ips'])
-        users = []
         for line in users_output.decode('utf-8').strip().split('\n'):
             username = line.split('\t')[0]
             config_file = f'/opt/wireguard_web/{username}.conf'
@@ -49,25 +50,31 @@ def get_users():
                 'qr_code_file': qr_code_file,
             }
             users.append(user)
-        return users
-    except subprocess.CalledProcessError:
-        return []
+    except subprocess.CalledProcessError as e:
+        print(f'Error: {str(e)}')
+    return users
 
 # Rota para criar um novo usuário
 @app.route('/create', methods=['POST'])
 def create_user():
     username = request.form['username']
-    subprocess.run(['wg', 'set', 'wg0', 'peer', username, 'allowed-ips', '10.0.0.' + str(len(get_users()) + 2) + '/32'])
-    generate_config(username)
-    generate_qr_code(username)
+    try:
+        subprocess.run(['wg', 'set', 'wg0', 'peer', username, 'allowed-ips', '10.0.0.' + str(len(get_users()) + 2) + '/32'])
+        generate_config(username)
+        generate_qr_code(username)
+    except subprocess.CalledProcessError as e:
+        print(f'Error: {str(e)}')
     return index()
 
 # Rota para apagar um usuário
 @app.route('/delete/<username>')
 def delete_user(username):
-    subprocess.run(['wg', 'set', 'wg0', 'peer', username, 'remove'])
-    remove_config(username)
-    remove_qr_code(username)
+    try:
+        subprocess.run(['wg', 'set', 'wg0', 'peer', username, 'remove'])
+        remove_config(username)
+        remove_qr_code(username)
+    except subprocess.CalledProcessError as e:
+        print(f'Error: {str(e)}')
     return index()
 
 # Rota para baixar a configuração do usuário
@@ -86,22 +93,26 @@ def view_qr_code(username):
 def generate_config(username):
     config_file = f'/opt/wireguard_web/{username}.conf'
     with open(config_file, 'w') as f:
-        private_key = subprocess.check_output(['wg', 'genkey']).decode('utf-8').strip()
-        public_key = subprocess.check_output(['echo', private_key, '|', 'wg', 'pubkey']).decode('utf-8').strip()
-        address = f'10.0.0.{len(get_users()) + 2}/32'
-        f.write(f'[Interface]\n')
-        f.write(f'PrivateKey = {private_key}\n')
-        f.write(f'Address = {address}\n')
-        f.write(f'\n')
-        f.write(f'[Peer]\n')
-        f.write(f'PublicKey = {public_key}\n')
-        f.write(f'AllowedIPs = 0.0.0.0/0\n')
-        f.write(f'Endpoint = 129.148.48.221:51820\n')  # Replace with your server's public IP address
+        try:
+            private_key = subprocess.check_output(['wg', 'genkey']).decode('utf-8').strip()
+            public_key = subprocess.check_output(['echo', private_key, '|', 'wg', 'pubkey']).decode('utf-8').strip()
+            address = f'10.0.0.{len(get_users()) + 2}/32'
+            f.write(f'[Interface]\n')
+            f.write(f'PrivateKey = {private_key}\n')
+            f.write(f'Address = {address}\n')
+            f.write(f'\n')
+            f.write(f'[Peer]\n')
+            f.write(f'PublicKey = {public_key}\n')
+            f.write(f'AllowedIPs = 0.0.0.0/0\n')
+            f.write(f'Endpoint = 129.148.48.221:51820\n')  # Replace with your server's public IP address
+        except subprocess.CalledProcessError as e:
+            print(f'Error: {str(e)}')
 
 # Função para remover a configuração do usuário
 def remove_config(username):
     config_file = f'/opt/wireguard_web/{username}.conf'
-    subprocess.run(['rm', config_file])
+    if os.path.exists(config_file):
+        os.remove(config_file)
 
 # Função para gerar o QR code do usuário
 def generate_qr_code(username):
@@ -122,7 +133,8 @@ def generate_qr_code(username):
 # Função para remover o QR code do usuário
 def remove_qr_code(username):
     qr_code_file = f'/opt/wireguard_web/{username}_qr.png'
-    subprocess.run(['rm', qr_code_file])
+    if os.path.exists(qr_code_file):
+        os.remove(qr_code_file)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
