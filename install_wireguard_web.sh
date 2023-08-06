@@ -40,11 +40,9 @@ wg_interface = 'wg0'
 wg_config_file = '/etc/wireguard/wg0.conf'
 wg_users_dir = '/etc/wireguard/users'
 
-# Diretório onde serão salvos os arquivos QR
-static_dir = 'static'
-if not os.path.exists(static_dir):
-    os.makedirs(static_dir)
-
+if not os.path.exists('static'):
+    os.makedirs('static')
+    
 # Função para criar um novo usuário no WireGuard
 def create_user(username):
     os.system(f'wg genkey > {wg_users_dir}/{username}.private')
