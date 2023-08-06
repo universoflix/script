@@ -20,9 +20,9 @@ if ! python3 -m pip show uwsgi &> /dev/null; then
     sudo python3 -m pip install uwsgi flask
 fi
 
-# Baixar o arquivo app.py
-wget -O app.py https://raw.githubusercontent.com/universoflix/script/main/app.py
+# Baixar o arquivo app.py na pasta raiz (root)
+wget -O /root/app.py https://raw.githubusercontent.com/universoflix/script/main/app.py
 
 # Executar o uWSGI
 echo "Executando o uWSGI..."
-uwsgi --http-socket :45678 --plugin python3 --wsgi-file app.py
+uwsgi --http-socket :45678 --plugin python3 --module app:app
