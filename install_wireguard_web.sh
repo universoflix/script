@@ -32,7 +32,6 @@ cat << 'EOF' > /opt/wireguard_web/app.py
 import os
 from flask import Flask, render_template, request, redirect, url_for
 import qrcode
-import subprocess
 
 app = Flask(__name__)
 
@@ -86,9 +85,8 @@ def create():
 
 if __name__ == '__main__':
     # Configurar as permissões corretas para o arquivo wg0.conf
-    subprocess.run(['chmod', '600', '/etc/wireguard/wg0.conf'])
+    os.chmod('/etc/wireguard/wg0.conf', 0o600)
     app.run(host='0.0.0.0', port=5000, debug=True)
-
 EOF 
 
 # Criar o arquivo index.html com o conteúdo da página HTML
