@@ -12,15 +12,17 @@ if ! check_package "python3"; then
     sudo apt install python3 -y
 fi
 
-# Instalar o uWSGI e Flask usando o pip
-if ! python3 -m pip show uwsgi &> /dev/null; then
-    echo "Instalando uWSGI e Flask..."
-    sudo apt update
-    sudo apt install python3-pip -y
-    sudo python3 -m pip install uwsgi flask
-fi
+# Instalar as dependências necessárias para compilar o uWSGI
+echo "Instalando as dependências necessárias para compilar o uWSGI..."
+sudo apt update
+sudo apt install build-essential python3-dev -y
+
+# Recompilar o uWSGI com suporte ao plugin Python3
+echo "Recompilando o uWSGI com suporte ao plugin Python3..."
+sudo python3 -m pip install uwsgi --no-cache-dir --force-reinstall --install-option="--plugin=python3"
 
 # Baixar o arquivo app.py na pasta raiz (root)
+echo "Baixando o arquivo app.py na pasta raiz..."
 wget -O /root/app.py https://raw.githubusercontent.com/universoflix/script/main/app.py
 
 # Executar o uWSGI
