@@ -40,9 +40,7 @@ wg_interface = 'wg0'
 wg_config_file = '/etc/wireguard/wg0.conf'
 wg_users_dir = '/etc/wireguard/users'
 
-if not os.path.exists('static'):
-    os.makedirs('static')
-    
+
 # Função para criar um novo usuário no WireGuard
 def create_user(username):
     os.system(f'wg genkey > {wg_users_dir}/{username}.private')
@@ -70,7 +68,7 @@ def create():
     username = request.form['username']
     private_key = create_user(username)
     qr = qrcode.make(private_key)
-    qr.save(f'/opt/wireguard_web/static/{username}.png')
+    qr.save(f'/opt/wireguard_web/{username}.png')
     return redirect(url_for('index'))
 
 # Rota para apagar um usuário
