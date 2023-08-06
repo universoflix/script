@@ -22,10 +22,7 @@ if ! python3 -c "import flask" &> /dev/null; then
     sudo apt install python3-flask -y
 fi
 
-# Dar permissões de execução ao arquivo
-chmod +x app.py
-
 # Executar o arquivo
 echo "Executando o arquivo app.py..."
-./app.py
+python3 app.py
 
