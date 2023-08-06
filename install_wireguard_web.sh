@@ -6,9 +6,9 @@ script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # Atualizar o sistema
 sudo apt-get update
 
-# Instalar as dependências do Pillow e do Flask
+# Instalar as dependências do Pillow, Flask e qrcode
 sudo apt-get install python3 python3-pip python3-dev libjpeg-dev zlib1g-dev -y
-pip3 install flask pillow
+pip3 install flask pillow qrcode
 
 # Instalar o WireGuard
 sudo apt-get install wireguard-tools -y
