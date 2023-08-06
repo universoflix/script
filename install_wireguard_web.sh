@@ -7,9 +7,11 @@ script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 sudo apt-get update
 
 # Instalar o Python e o Flask
-sudo apt-get install python3 python3-pip -y
+sudo apt-get install python3 python3-pip python3-dev -y
 pip3 install flask
-pip3 install qrcode[pil]
+
+# Instalar o pacote pillow
+pip3 install pillow
 
 # Instalar o WireGuard
 sudo apt-get install wireguard-tools -y
@@ -17,6 +19,9 @@ sudo apt-get install wireguard-tools -y
 # Criar um diretório para o servidor Flask, se ainda não existir
 sudo mkdir -p /opt/wireguard_web
 sudo chown $USER:$USER /opt/wireguard_web
+
+# Criar um diretório para o servidor web do Flask, se ainda não existir
+sudo mkdir -p /opt/wireguard_web/templates
 
 # Criar um diretório para o servidor web do Flask, se ainda não existir
 sudo mkdir -p /opt/wireguard_web/templates
@@ -140,12 +145,7 @@ cat << 'EOF' > /opt/wireguard_web/templates/index.html
     <h1>Usuários do WireGuard</h1>
     <ul>
         {% for user in users %}
-            <li>
-                {{ user.name }}
-                <a href="/delete/{{ user.name }}">Apagar</a>
-                <a href="/download/{{ user.name }}">Baixar Configuração</a>
-                <a href="/qr/{{ user.name }}">QR Code</a>
-            </li>
+            <li>{{ user }} <a href="/delete/{{ user }}">Apagar</a></li>
         {% endfor %}
     </ul>
     <form action="/create" method="post">
@@ -160,11 +160,14 @@ EOF
 # Obter o endereço IP local do servidor
 server_ip=$(hostname -I | awk '{print $1}')
 
-# Finalizar o servidor Flask, se já estiver em execução
-pkill -f app.py
+# Verificar se o servidor Flask já está em execução
+if [ "$(pgrep -f 'python3 /opt/wireguard_web/app.py')" ]; then
+    echo "Parando o servidor Flask anterior..."
+    sudo pkill -f 'python3 /opt/wireguard_web/app.py'
+fi
 
 # Iniciar o servidor Flask em background
-nohup python3 /opt/wireguard_web/app.py > /dev/null 2>&1 &
+python3 /opt/wireguard_web/app.py &
 
 echo "Instalação completa. O servidor web do WireGuard foi iniciado."
 echo "Você pode acessar a interface web em http://$server_ip:5000"
