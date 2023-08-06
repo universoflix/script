@@ -32,6 +32,7 @@ cat << 'EOF' > /opt/wireguard_web/app.py
 import os
 from flask import Flask, render_template, request, redirect, url_for
 import qrcode
+import subprocess
 
 app = Flask(__name__)
 
@@ -84,6 +85,8 @@ def create():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
+    # Configurar as permissões corretas para o arquivo wg0.conf
+    subprocess.run(['chmod', '600', '/etc/wireguard/wg0.conf'])
     app.run(host='0.0.0.0', port=5000, debug=True)
 EOF 
 
