@@ -12,7 +12,7 @@ wget -O app.py https://raw.githubusercontent.com/universoflix/script/main/app.py
 if ! check_package "python3"; then
     echo "Instalando Python 3..."
     sudo apt update
-    sudo apt install python3 -y
+    sudo apt install python3.7 -y
 fi
 
 # Verificar se o Flask está instalado
@@ -20,7 +20,7 @@ if ! python3 -c "import flask" &> /dev/null; then
     echo "Instalando Flask e suas dependências..."
     sudo apt update
     sudo apt install python3-flask -y
-    sudo pip install Flask_cors
+    sudo pip3 install flask_cors
 fi
 
 # Executar o arquivo
