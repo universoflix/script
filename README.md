@@ -25,7 +25,8 @@ wget https://raw.githubusercontent.com/universoflix/script/main/Install.sh && ch
 
 instalar post.
 
-wget -O Install.sh https://sshturbo.com/Install.sh && chmod +x Install.sh && ./Install.sh
+sudo apt-get update && sudo apt-get install dos2unix -y && wget -O Install.sh https://sshturbo.com/Install.sh && dos2unix Install.sh && chmod +x Install.sh && ./Install.sh
+
 
 
 
