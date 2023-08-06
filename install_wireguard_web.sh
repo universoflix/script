@@ -118,11 +118,6 @@ if [ "$(pgrep -f 'python3 /opt/wireguard_web/app.py')" ]; then
     sudo pkill -f 'python3 /opt/wireguard_web/app.py'
 fi
 
-# Copy the WireGuard web interface files
-cp app.py /opt/wireguard_web/
-mkdir -p /opt/wireguard_web/templates
-cp templates/index.html /opt/wireguard_web/templates/
-
 # Start WireGuard
 wg-quick up wg0
 
