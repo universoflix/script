@@ -20,7 +20,7 @@ if ! python3 -c "import flask" &> /dev/null; then
     echo "Instalando Flask e suas dependências..."
     sudo apt update
     sudo apt install python3-flask -y
-sudo pip3 install flask_cors
+    sudo pip install Flask_cors
 fi
 
 # Executar o arquivo
