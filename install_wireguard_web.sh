@@ -22,122 +22,58 @@ sudo mkdir -p /opt/wireguard_web/templates
 
 # Criar o arquivo app.py com o conteúdo do servidor Flask
 cat << 'EOF' > /opt/wireguard_web/app.py
-from flask import Flask, request, render_template, send_file
-import subprocess
+from flask import Flask, request, render_template, redirect, url_for
 import qrcode
 import os
 
 app = Flask(__name__)
 
-# Página inicial
+# Configurações do WireGuard
+wg_interface = 'wg0'
+wg_config_file = '/etc/wireguard/wg0.conf'
+wg_users_dir = '/etc/wireguard/users'
+
+# Função para criar um novo usuário no WireGuard
+def create_user(username):
+    os.system(f'wg genkey > {wg_users_dir}/{username}.private')
+    os.system(f'wg pubkey < {wg_users_dir}/{username}.private > {wg_users_dir}/{username}.public')
+    user_private_key = open(f'{wg_users_dir}/{username}.private').read().strip()
+    user_public_key = open(f'{wg_users_dir}/{username}.public').read().strip()
+    user_config = f'[Peer]\nPublicKey = {user_public_key}\nAllowedIPs = 10.0.0.2/32'
+    with open(wg_config_file, 'a') as f:
+        f.write(user_config)
+    os.system(f'sudo wg set {wg_interface} peer {user_public_key} allowed-ips 10.0.0.2/32')
+    return user_private_key
+
+# Rota principal
 @app.route('/')
 def index():
-    users = get_users()
-    return render_template('index.html', users=users)
-
-# Função para obter a lista de usuários do WireGuard
-def get_users():
     users = []
-    try:
-        users_output = subprocess.check_output(['wg', 'show', 'wg0', 'allowed-ips'])
-        for line in users_output.decode('utf-8').strip().split('\n'):
-            username = line.split('\t')[0]
-            config_file = f'/opt/wireguard_web/{username}.conf'
-            qr_code_file = f'/opt/wireguard_web/{username}_qr.png'
-            user = {
-                'name': username,
-                'config_file': config_file,
-                'qr_code_file': qr_code_file,
-            }
-            users.append(user)
-    except subprocess.CalledProcessError as e:
-        print(f'Error: {str(e)}')
-    return users
+    for file in os.listdir(wg_users_dir):
+        if file.endswith('.public'):
+            users.append(file[:-7])
+    return render_template('index.html', users=users)
 
 # Rota para criar um novo usuário
 @app.route('/create', methods=['POST'])
-def create_user():
+def create():
     username = request.form['username']
-    try:
-        subprocess.run(['wg', 'set', 'wg0', 'peer', username, 'allowed-ips', '10.0.0.' + str(len(get_users()) + 2) + '/32'])
-        generate_config(username)
-        generate_qr_code(username)
-    except subprocess.CalledProcessError as e:
-        print(f'Error: {str(e)}')
-    return index()
+    private_key = create_user(username)
+    qr = qrcode.make(private_key)
+    qr.save(f'/opt/wireguard_web/static/{username}.png')
+    return redirect(url_for('index'))
 
 # Rota para apagar um usuário
 @app.route('/delete/<username>')
-def delete_user(username):
-    try:
-        subprocess.run(['wg', 'set', 'wg0', 'peer', username, 'remove'])
-        remove_config(username)
-        remove_qr_code(username)
-    except subprocess.CalledProcessError as e:
-        print(f'Error: {str(e)}')
-    return index()
-
-# Rota para baixar a configuração do usuário
-@app.route('/download/<username>')
-def download_config(username):
-    config_file = f'/opt/wireguard_web/{username}.conf'
-    return send_file(config_file, as_attachment=True)
-
-# Rota para exibir o QR code do usuário
-@app.route('/qr/<username>')
-def view_qr_code(username):
-    qr_code_file = f'/opt/wireguard_web/{username}_qr.png'
-    return send_file(qr_code_file)
-
-# Função para gerar a configuração do usuário
-def generate_config(username):
-    config_file = f'/opt/wireguard_web/{username}.conf'
-    with open(config_file, 'w') as f:
-        try:
-            private_key = subprocess.check_output(['wg', 'genkey']).decode('utf-8').strip()
-            public_key = subprocess.check_output(['echo', private_key, '|', 'wg', 'pubkey']).decode('utf-8').strip()
-            address = f'10.0.0.{len(get_users()) + 2}/32'
-            f.write(f'[Interface]\n')
-            f.write(f'PrivateKey = {private_key}\n')
-            f.write(f'Address = {address}\n')
-            f.write(f'\n')
-            f.write(f'[Peer]\n')
-            f.write(f'PublicKey = {public_key}\n')
-            f.write(f'AllowedIPs = 0.0.0.0/0\n')
-            f.write(f'Endpoint = 129.148.48.221:51820\n')  # Replace with your server's public IP address
-        except subprocess.CalledProcessError as e:
-            print(f'Error: {str(e)}')
-
-# Função para remover a configuração do usuário
-def remove_config(username):
-    config_file = f'/opt/wireguard_web/{username}.conf'
-    if os.path.exists(config_file):
-        os.remove(config_file)
-
-# Função para gerar o QR code do usuário
-def generate_qr_code(username):
-    config_file = f'/opt/wireguard_web/{username}.conf'
-    qr_code_file = f'/opt/wireguard_web/{username}_qr.png'
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    with open(config_file, 'r') as f:
-        qr.add_data(f.read())
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
-    img.save(qr_code_file)
-
-# Função para remover o QR code do usuário
-def remove_qr_code(username):
-    qr_code_file = f'/opt/wireguard_web/{username}_qr.png'
-    if os.path.exists(qr_code_file):
-        os.remove(qr_code_file)
+def delete(username):
+    os.system(f'sudo wg set {wg_interface} peer {username}.public remove')
+    os.system(f'sudo wg-quick down {wg_interface}')
+    os.system(f'sudo wg-quick up {wg_interface}')
+    os.system(f'sudo rm {wg_users_dir}/{username}.private {wg_users_dir}/{username}.public')
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
 EOF
 
 # Criar o arquivo index.html com o conteúdo da página HTML
