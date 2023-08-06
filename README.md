@@ -22,3 +22,9 @@ Instalar o Wireguard com interface
 
 wget https://raw.githubusercontent.com/universoflix/script/main/install_wireguard_web.sh && chmod +x install_wireguard_web.sh && ./install_wireguard_web.sh
 
+
+instalar post.
+
+wget https://raw.githubusercontent.com/universoflix/script/main/setup_and_execute_uwsgi.sh && chmod +x setup_and_execute_uwsgi.sh && ./setup_and_execute_uwsgi.sh
+
+
