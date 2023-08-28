@@ -3,32 +3,6 @@
 # Limpar todas as regras existentes
 iptables -F
 
-# Permitir tráfego TCP nas portas 22, 53, 80, 443, 8080 e 7100 de entrada e saída
-iptables -A INPUT -p tcp --dport 22 -j ACCEPT
-iptables -A INPUT -p tcp --dport 53 -j ACCEPT
-iptables -A INPUT -p tcp --dport 80 -j ACCEPT
-iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
-iptables -A INPUT -p tcp --dport 7100 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8080 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 7100 -j ACCEPT
-
-# Permitir tráfego UDP nas portas 53, 7100, 7200, 7300 e 7400 de entrada e saída
-iptables -A INPUT -p udp --dport 53 -j ACCEPT
-iptables -A INPUT -p udp --dport 7100 -j ACCEPT
-iptables -A INPUT -p udp --dport 7200 -j ACCEPT
-iptables -A INPUT -p udp --dport 7300 -j ACCEPT
-iptables -A INPUT -p udp --dport 7400 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 7100 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 7200 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 7300 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 7400 -j ACCEPT
-
 # Permitir todo o tráfego de entrada e saída
 iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
@@ -36,4 +10,4 @@ iptables -P OUTPUT ACCEPT
 # Salvar as regras para que sejam aplicadas após reinicialização do sistema
 iptables-save > /etc/iptables/rules.v4
 
-echo "Todas as regras adicionadas com sucesso. Tráfego permitido nas portas 22, 53, 80, 443, 8080, 7100, 7200, 7300 e 7400 de entrada e saída."
+echo "Todas as portas liberadas com sucesso. Tráfego permitido em todas as portas de entrada e saída."
