@@ -12,4 +12,4 @@ sudo apt-get update && sudo apt-get install dos2unix -y && wget -O Install.sh ht
 
 ________________________________________________________________________________________________________________________________________________________________________________
 
-
+sudo apt-get update && sudo apt-get install dos2unix -y && wget -O ubuntu.sh https://raw.githubusercontent.com/universoflix/script/main/ubuntu.sh && dos2unix ubuntu.sh && chmod +x ubuntu.sh && ./ubuntu.sh
